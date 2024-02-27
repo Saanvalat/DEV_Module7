@@ -1,40 +1,49 @@
 package com.feature.prefs;
 
-import com.google.gson.Gson;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+public class Database {
+    public static final String INIT_DB_SQL = "/Users/mac/Documents/3. Code/DEV_Module6/sql/init_db.sql";
+    public static final String POPULATE_DB_SQL = "/Users/mac/Documents/3. Code/DEV_Module6/sql/populate_db.sql";
+    public static final String DB_URL = "jdbc:h2:./test";
+    public static final String USER = "";
+    public static final String PASSWORD = "";
+    private static Database instance;
 
-public class Prefs {
-    public static final String DB_URL = "dbURL";
-    public static final String DEFAULT_PREFS_FILENAME = "prefs.json";
-    private Map<String, Object> prefs = new HashMap<>();
+    private Database() {
 
-    public Prefs(){
-        this(DEFAULT_PREFS_FILENAME);
     }
 
-    public Prefs(String fileName){
-        try {
-            String json = Files.readAllLines(Paths.get(fileName)).stream().collect(Collectors.joining("\n"));
-        prefs = new Gson ().fromJson(json, Map.class);
+    public static synchronized Database getInstance() {
+        if (instance == null) {
+            instance = new Database();
+        }
+        return instance;
+    }
 
-        } catch (IOException e) {
+    public Connection getConnection() throws SQLException {
+        try {
+            return DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            throw new SQLException("Не вдалося отримати підключення до бази даних.", e);
+        }
+    }
+
+    public static void main(String args[]) {
+        try {
+            Class.forName("org.h2.Driver");
+
+            try (Connection con = Database.getInstance().getConnection()) {
+                System.out.println("Connected");
+            } catch (SQLException e) {
+                System.out.println("Connection failed");
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            System.out.println("H2 JDBC Driver not found");
             e.printStackTrace();
         }
     }
-    public String getString(String key){
-        return getPref(key).toString();
-    }
-    public Object getPref(String key){
-        return prefs.get(key);
-    }
-
-
 }
-
