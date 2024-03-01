@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import static com.feature.prefs.Database.POPULATE_DB_SQL;
@@ -16,9 +17,9 @@ public class DatabasePopulateService {
     private static void executeSqlStatements(String sqlContent) throws SQLException {
         try (Connection connection = Database.getInstance().getConnection()) {
             if (connection != null) {
-                try (Statement statement = connection.createStatement()) {
-                    if (statement != null) {
-                        statement.execute(sqlContent);
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sqlContent)) {
+                    if (preparedStatement != null) {
+                        preparedStatement.execute(sqlContent);
                     }
                 }
             }

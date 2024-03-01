@@ -1,6 +1,7 @@
 package org.example;
 
 import AccessorMethods.*;
+import com.feature.prefs.AddWorkers;
 import com.feature.prefs.Database;
 
 import java.io.IOException;
@@ -127,6 +128,8 @@ public class DatabaseQueryService {
         List<MaxSalaryWorker> maxCountMaxSalary = queryService.countMaxSalaryList();
         List<YoungestEldestWorkers> youngestEldestWorkers = queryService.youngestEldestWorkersList();
         List<PrintProjectPrices> projectPrices = queryService.projectPricesList();
+        AddWorkers.newPerson(11,"Georg","1998-02-03","Middle", 2500);
+
 
 
         System.out.println("Max Project Count Clients: " + maxProjectCountClients);
